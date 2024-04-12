@@ -1,31 +1,28 @@
 import json
-import os
 import datetime
-from config import ROOT_DIR
-
-OPERATIONS_PATH = os.path.join(ROOT_DIR, "data", "operations.json")
 
 
-def load_json():
-    with open(OPERATIONS_PATH) as file:
+
+def load_json(file_path):
+    with open(file_path) as file:
         response = json.load(file)
         return response
 
 
-def filtered_load_json():
+def filtered_load_json(json_):
     filtered_list = []
-    for state in load_json():
+    for state in json_:
         if state.get("state") == "EXECUTED":
             filtered_list.append(state)
     return filtered_list
 
 
-def sorted_load_json():
-    return sorted(filtered_load_json(), key=lambda x: x["date"], reverse=True)
+def sorted_load_json(filtered_json):
+    return sorted(filtered_json, key=lambda x: x["date"], reverse=True)
 
 
-def output_last_transactions():
-    return sorted_load_json()[:5]
+def output_last_transactions(sorted_json):
+    return sorted_json[:5]
 
 def not_show_(result):
     if result == None:
@@ -35,15 +32,14 @@ def not_show_(result):
     else:
         return result[:-16] + result[-16:-12] + " " + result[-12:-10] + "** **** " + result[-4:]
 
-def print_result():
-    for result in output_last_transactions():
-        date_transaction = datetime.datetime.fromisoformat(result["date"])
+def print_result(dict_with_operation):
+        date_transaction = datetime.datetime.fromisoformat(dict_with_operation["date"])
         date_transaction = date_transaction.strftime('%d.%m.%Y')
-        operation_amount = result["operationAmount"]["amount"]
-        currency = result["operationAmount"]["currency"]["name"]
-        description = result["description"]
-        from_transaction = not_show_(result.get("from"))
-        to_transaction = not_show_(result["to"])
+        operation_amount = dict_with_operation["operationAmount"]["amount"]
+        currency = dict_with_operation["operationAmount"]["currency"]["name"]
+        description = dict_with_operation["description"]
+        from_transaction = not_show_(dict_with_operation.get("from"))
+        to_transaction = not_show_(dict_with_operation["to"])
         print(f"""
         {date_transaction} {description}
         {from_transaction} -> {to_transaction}
