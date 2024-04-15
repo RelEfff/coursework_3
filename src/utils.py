@@ -4,7 +4,7 @@ import datetime
 
 
 def load_json(file_path):
-    with open(file_path) as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         response = json.load(file)
         return response
 
